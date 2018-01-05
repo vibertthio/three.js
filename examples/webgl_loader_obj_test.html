@@ -32,58 +32,13 @@
 
 		<script src="../build/three.js"></script>
 		<script src="js/loaders/OBJLoader.js"></script>
-		<script id="vertex_shader" type="x-shader/x-vertex">
-
-varying vec2 vUv;
-varying vec3 vNormal;
-varying vec3 vViewPosition;
-
-void main() {
-
-	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-
-	vUv = uv;
-	vNormal = normalize( normalMatrix * normal );
-	vViewPosition = -mvPosition.xyz;
-
-	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-
-}
-
-</script>
-
-<script id="fragment_shader" type="x-shader/x-fragment">
-
-uniform sampler2D texture;
-uniform sampler2D texture2;
-
-varying vec2 vUv;
-varying vec3 vNormal;
-varying vec3 vViewPosition;
-
-void main() {
-
-	vec4 tColor = texture2D( texture, vUv );
-	vec4 tColor2 = texture2D( texture2, vUv );
-
-	// hack in a fake pointlight at camera location, plus ambient
-	vec3 normal = normalize( vNormal );
-	vec3 lightDir = normalize( vViewPosition );
-
-	float dotProduct = max( dot( normal, lightDir ), 0.0 ) + 0.2;
-
-	gl_FragColor = vec4( mix( tColor.rgb, tColor2.rgb, tColor2.a ) * dotProduct, 1.0 );
-
-}
-
-</script>
 
 		<script>
 
 			var container;
 
 			var camera, scene, renderer;
-
+			var model;
 			var mouseX = 0, mouseY = 0;
 
 			var windowHalfX = window.innerWidth / 2;
@@ -100,8 +55,8 @@ void main() {
 				document.body.appendChild( container );
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-				camera.position.z = 250;
-				// camera.position.z = 5;
+				// camera.position.z = 250;
+				camera.position.z = 5;
 
 				// scene
 
@@ -125,9 +80,13 @@ void main() {
 
 				var textureLoader = new THREE.TextureLoader( manager );
 				var texture = textureLoader.load( 'textures/UV_Grid_Sm.jpg' );
-				// texture.wrapS = THREE.RepeatWrapping;
-				// texture.wrapT = THREE.RepeatWrapping;
-				// texture.repeat.set(10, 10);
+				// var texture = textureLoader.load( 'textures/perlin-512.png' );
+				// texture.format = THREE.RGBAFormat;
+				texture.wrapS = THREE.RepeatWrapping;
+				texture.wrapT = THREE.RepeatWrapping;
+				// texture.repeat.set(10000, 10000);
+				// texture.needsUpdate = true;
+				texture.center = new THREE.Vector2(0.3, 0.3);
 
 				// model
 
@@ -143,33 +102,48 @@ void main() {
 
 				var loader = new THREE.OBJLoader( manager );
 
-				loader.load( 'obj/male02/male02.obj', function ( object ) {
+				// loader.load( 'obj/male02/male02.obj', function ( object ) {
 				// loader.load( 'obj/synth/model.obj', function ( object ) {
+				loader.load( 'obj/synthAlone/synth.obj', function ( object ) {
 					console.log(object);
 					object.materialLibraries = null;
 					object.traverse( function ( child ) {
 
 						if ( child instanceof THREE.Mesh ) {
-							// child.material = child.material.map((mat, i) => {
-								// let m;
-								// if (i < 10) {
+							child.material = child.material.map((mat, i) => {
+								let m;
+								// if (i < 2) {
 								// 	m = new THREE.MeshNormalMaterial();
 								// } else {
-								// 	m = new THREE.MeshStandardMaterial();
+								// 	m = new THREE.MeshStandardMaterial({ transparent: true });
 								// }
-								// const m = new THREE.MeshLambertMaterial( { map: texture, color: 0xffffff } );
-								// const m = new THREE.MeshStandardMaterial( { map: texture, color: 0xaa5555 });
-								// const m = new THREE.MeshBasicMaterial( { map: texture } );
-								// m.map = texture;
-								// return m;
 
+								m = new THREE.MeshLambertMaterial( { map: texture, color: 0xffffff } );
+								// m.side = THREE.DoubleSide;
+								// m = new THREE.MeshStandardMaterial( { map: texture, color: 0xaa5555 });
+								// m = new THREE.MeshBasicMaterial( { map: texture } );
+								// const m = new THREE.MeshPhysicalMaterial( { map: texture } );
+								// m.needsUpdate = true;
+								// m.colorWrite = false;
+								// m.wireframe = true;
+								m.map = texture;
+								return m;
+
+								// mat.color = new THREE.Color(0x2194ce);
+								// mat.emissive = new THREE.Color(0x723a3a);
+								// mat.wireframe = true;
+								// mat.opacity = 1.0;
+								// mat.polygonOffset = true;
+								// mat.polygonOffsetFactor = 0.5;
+								// mat.setValues({ map: texture });
 								// mat.map = texture;
+								// mat.update();
 								// return mat;
 
 								// m.color = new THREE.Color(0x2194ce);
 								// m.color = null;
-							// });
-							child.material.map = texture;
+							});
+							// child.material.map = texture;
 							// child.material.color = new THREE.Color(0x2194ce);
 
 						}
@@ -182,9 +156,10 @@ void main() {
 
 					} );
 
-					object.position.y = - 95;
+					object.position.y = -0.5;
 					// object.position.y = 0;
-					// object.rotation.y = Math.PI;
+					object.rotation.y = Math.PI;
+					model = object;
 					scene.add( object );
 
 				}, onProgress, onError );
@@ -234,11 +209,13 @@ void main() {
 
 			function render() {
 
-				camera.position.x += ( mouseX - camera.position.x ) * .01;
-				camera.position.y += ( - mouseY - camera.position.y ) * .01;
+				camera.position.x += ( mouseX * 0.01 - camera.position.x ) * .01;
+				camera.position.y += ( - mouseY * 0.01 - camera.position.y ) * .01;
 
 				camera.lookAt( scene.position );
-
+				if (model) {
+					// model.rotation.y += 0.01;
+				}
 				renderer.render( scene, camera );
 
 			}

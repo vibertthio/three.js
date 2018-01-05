@@ -84,17 +84,18 @@
 				velocityRandomness: .5,
 				color: 0xaa88ff,
 				colorRandomness: .2,
-				turbulence: .5,
-				lifetime: 2,
+				turbulence: 1.0,
+				lifetime: 10,
 				size: 5,
 				sizeRandomness: 1
 			};
 
 			spawnerOptions = {
-				spawnRate: 15000,
-				horizontalSpeed: 1.5,
-				verticalSpeed: 1.33,
-				timeScale: 1
+				spawnRate: 30000,
+				horizontalSpeed: 10,
+				// verticalSpeed: 1.33,
+				verticalSpeed: 10,
+				timeScale: 0.1,
 			};
 
 			//
@@ -105,7 +106,7 @@
 			gui.add( options, "sizeRandomness", 0, 25 );
 			gui.add( options, "colorRandomness", 0, 1 );
 			gui.add( options, "lifetime", .1, 10 );
-			gui.add( options, "turbulence", 0, 1 );
+			gui.add( options, "turbulence", 0, 5 );
 
 			gui.add( spawnerOptions, "spawnRate", 10, 30000 );
 			gui.add( spawnerOptions, "timeScale", -1, 1 );
@@ -125,10 +126,10 @@
 			//
 
 			controls = new THREE.TrackballControls( camera, renderer.domElement );
-			controls.rotateSpeed = 5.0;
-			controls.zoomSpeed = 2.2;
+			controls.rotateSpeed = 1;
+			controls.zoomSpeed = 1;
 			controls.panSpeed = 1;
-			controls.dynamicDampingFactor = 0.3;
+			controls.dynamicDampingFactor = 0.1;
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
@@ -157,11 +158,16 @@
 
 			if ( delta > 0 ) {
 
-				options.position.x = Math.sin( tick * spawnerOptions.horizontalSpeed ) * 20;
-				options.position.y = Math.sin( tick * spawnerOptions.verticalSpeed ) * 10;
-				options.position.z = Math.sin( tick * spawnerOptions.horizontalSpeed + spawnerOptions.verticalSpeed ) * 5;
+				// options.position.x = Math.sin( tick * spawnerOptions.horizontalSpeed ) * 20;
+				// options.position.y = Math.cos( tick * spawnerOptions.verticalSpeed ) * 20;
+				// options.position.z = 0;
+
+				// options.position.x = Math.sin( tick * spawnerOptions.horizontalSpeed ) * 20;
+				// options.position.y = Math.sin( tick * spawnerOptions.verticalSpeed ) * 10;
+				// options.position.z = Math.sin( tick * spawnerOptions.horizontalSpeed + spawnerOptions.verticalSpeed ) * 5;
 
 				for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
+					options.position = sphere();
 
 					// Yep, that's really it.	Spawning particles is super cheap, and once you spawn them, the rest of
 					// their lifecycle is handled entirely on the GPU, driven by a time uniform updated below
@@ -184,6 +190,35 @@
 
 			renderer.render( scene, camera );
 
+		}
+
+		function sphere() {
+			const r = 40;
+			const theta = Math.random() * Math.PI * 2;
+			const zpos = Math.random() * 2 - 1;
+			const rsin = Math.sqrt(1 - zpos * zpos)
+			const xpos = rsin * Math.cos(theta);
+			const ypos = rsin * Math.sin(theta);
+
+			return ({
+				x: r * xpos,
+				y: r * ypos,
+				z: r * zpos,
+			});
+		}
+		function peak() {
+			const r = 40;
+			const theta = Math.random() * Math.PI * 2;
+			const phi = Math.random() * Math.PI;
+			const xpos = r * Math.sin(phi) * Math.cos(theta);
+			const ypos = r * Math.sin(phi) * Math.sin(theta);
+			const zpos = r * Math.cos(phi);
+
+			return ({
+				x: xpos,
+				y: ypos,
+				z: zpos,
+			});
 		}
 
 	</script>

@@ -17,7 +17,8 @@
 
 THREE.GPUParticleSystem = function( options ) {
 
-	THREE.Object3D.apply( this, arguments );
+	// THREE.Object3D.apply( this, arguments );
+	THREE.Object3D.apply( this );
 
 	options = options || {};
 

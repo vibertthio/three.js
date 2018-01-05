@@ -28,8 +28,8 @@
 		<script>
 
 			var SEPARATION = 100;
-			var AMOUNTX = 50;
-			var AMOUNTY = 50;
+			var AMOUNTX = 10;
+			var AMOUNTY = 10;
 
 			var container, stats;
 			var camera, scene, renderer, particle;
@@ -46,7 +46,7 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.z = 1000;
 
 				scene = new THREE.Scene();
