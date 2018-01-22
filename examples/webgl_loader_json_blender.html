@@ -48,6 +48,7 @@
 
 			var container, stats, clock, mixer;
 			var camera, scene, renderer, objects;
+			var pointLight;
 
 			init();
 			animate();
@@ -64,23 +65,37 @@
 				scene = new THREE.Scene();
 				// scene.fog = new THREE.FogExp2( 0x000000, 0.035 );
 
-				mixer = new THREE.AnimationMixer( scene );
+				// mixer = new THREE.AnimationMixer( scene );
 
 				var loader = new THREE.JSONLoader();
 				// loader.load( 'models/animated/monster/monster.js', function ( geometry, materials ) {
 				// loader.load( 'models/animated/20180122_threejs_text_py/20180122_test-1_js.js', function ( geometry, materials ) {
-				loader.load( 'models/animated/20180122_threejs_text_py/20180122_test-1_js.json', function ( geometry, materials ) {
+				// loader.load( 'models/animated/20180122_threejs_text_py/20180122_test-1_js.json', function ( geometry, materials ) {
+				// loader.load( 'models/blender/teset.json', function ( geometry, materials ) {
+				loader.load( 'models/animated/test/man_asdf.json', function ( geometry, materials ) {
 
 					// adjust color a bit
 
 					// var material = materials[ 0 ];
 					// material.morphTargets = true;
 					// material.color.setHex( 0xffaaaa );
-
+					console.log(materials);
+					// materials[0].color = new THREE.Color(0x00ffdd);
+					// materials[0].color = new THREE.Color(0x0000ff);
+					// materials[0].emissive = new THREE.Color(0x442211);
+					// materials[0].specular = new THREE.Color(0xff0000);
+					// materials[0].specular = new THREE.Color(0xffff00);
+					// materials[0].specular = new THREE.Color(0xff00dd);
+					// materials[0].shininess = 100;
+					// materials[0].colorWrite = true;
+					const material = new THREE.MeshNormalMaterial({
+						morphTargets: true,
+					});
 					// for ( var i = 0; i < 729; i ++ ) {
 					for ( var i = 0; i < 1; i ++ ) {
 
-						var mesh = new THREE.Mesh( geometry, materials );
+						// var mesh = new THREE.Mesh( geometry, materials );
+						var mesh = new THREE.Mesh( geometry, material );
 
 						// random placement in a grid
 
@@ -88,10 +103,11 @@
 						var z = ( Math.floor( i / 27 ) - 13.5 ) * 2 + THREE.Math.randFloatSpread( 1 );
 
 						// mesh.position.set( x, 0, z );
-						mesh.position.set( 0, 0, 0 );
+						mesh.position.set( 0, -1, 0 );
 
 						// var s = THREE.Math.randFloat( 0.00075, 0.001 );
-						var s = 0.05;
+						// var s = 0.05;
+						var s = 2;
 						mesh.scale.set( s, s, s );
 
 						mesh.rotation.y = THREE.Math.randFloat( -0.25, 0.25 );
@@ -100,6 +116,9 @@
 						mesh.updateMatrix();
 
 						scene.add( mesh );
+						mixer = new THREE.AnimationMixer( mesh );
+						var clip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'gallop', geometry.morphTargets, 30 );
+						mixer.clipAction( clip ).setDuration( 1 ).play();
 
 						// mixer.clipAction( geometry.animations[ 0 ], mesh )
 						// 		.setDuration( 1 )			// one second
@@ -116,8 +135,9 @@
 				scene.add( ambientLight );
 
 				// var pointLight = new THREE.PointLight( 0xff4400, 5, 30 );
-				var pointLight = new THREE.PointLight( 0xffffff, 5, 30 );
-				pointLight.position.set( 5, 0, 0 );
+				pointLight = new THREE.PointLight( 0xffffff, 10, 30 );
+				// pointLight = new THREE.PointLight( 0x00ffdd, 0.5, 30 );
+				pointLight.position.set( 10, 0, 0 );
 				scene.add( pointLight );
 
 				// renderer
@@ -164,11 +184,15 @@
 
 				var timer = Date.now() * 0.0005;
 
-				camera.position.x = Math.cos( timer ) * 10;
+				pointLight.position.x = Math.cos( timer ) * 1;
+				pointLight.position.y = 0;
+				pointLight.position.z = Math.sin( timer ) * 1;
+				camera.position.x = Math.cos( timer ) * 5;
 				camera.position.y = 4;
-				camera.position.z = Math.sin( timer ) * 10;
-
-				mixer.update( clock.getDelta() );
+				camera.position.z = Math.sin( timer ) * 5;
+				if (mixer) {
+					mixer.update( clock.getDelta() );
+				}
 
 				camera.lookAt( scene.position );
 
