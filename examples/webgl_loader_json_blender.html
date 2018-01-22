@@ -62,20 +62,23 @@
 				clock = new THREE.Clock();
 
 				scene = new THREE.Scene();
-				scene.fog = new THREE.FogExp2( 0x000000, 0.035 );
+				// scene.fog = new THREE.FogExp2( 0x000000, 0.035 );
 
 				mixer = new THREE.AnimationMixer( scene );
 
 				var loader = new THREE.JSONLoader();
-				loader.load( 'models/animated/monster/monster.js', function ( geometry, materials ) {
+				// loader.load( 'models/animated/monster/monster.js', function ( geometry, materials ) {
+				// loader.load( 'models/animated/20180122_threejs_text_py/20180122_test-1_js.js', function ( geometry, materials ) {
+				loader.load( 'models/animated/20180122_threejs_text_py/20180122_test-1_js.json', function ( geometry, materials ) {
 
 					// adjust color a bit
 
-					var material = materials[ 0 ];
-					material.morphTargets = true;
-					material.color.setHex( 0xffaaaa );
+					// var material = materials[ 0 ];
+					// material.morphTargets = true;
+					// material.color.setHex( 0xffaaaa );
 
-					for ( var i = 0; i < 729; i ++ ) {
+					// for ( var i = 0; i < 729; i ++ ) {
+					for ( var i = 0; i < 1; i ++ ) {
 
 						var mesh = new THREE.Mesh( geometry, materials );
 
@@ -84,9 +87,11 @@
 						var x = ( ( i % 27 )  - 13.5 ) * 2 + THREE.Math.randFloatSpread( 1 );
 						var z = ( Math.floor( i / 27 ) - 13.5 ) * 2 + THREE.Math.randFloatSpread( 1 );
 
-						mesh.position.set( x, 0, z );
+						// mesh.position.set( x, 0, z );
+						mesh.position.set( 0, 0, 0 );
 
-						var s = THREE.Math.randFloat( 0.00075, 0.001 );
+						// var s = THREE.Math.randFloat( 0.00075, 0.001 );
+						var s = 0.05;
 						mesh.scale.set( s, s, s );
 
 						mesh.rotation.y = THREE.Math.randFloat( -0.25, 0.25 );
@@ -96,10 +101,10 @@
 
 						scene.add( mesh );
 
-						mixer.clipAction( geometry.animations[ 0 ], mesh )
-								.setDuration( 1 )			// one second
-								.startAt( - Math.random() )	// random phase (already running)
-								.play();					// let's go
+						// mixer.clipAction( geometry.animations[ 0 ], mesh )
+						// 		.setDuration( 1 )			// one second
+						// 		.startAt( - Math.random() )	// random phase (already running)
+						// 		.play();					// let's go
 
 					}
 
@@ -110,7 +115,8 @@
 				var ambientLight = new THREE.AmbientLight( 0xcccccc );
 				scene.add( ambientLight );
 
-				var pointLight = new THREE.PointLight( 0xff4400, 5, 30 );
+				// var pointLight = new THREE.PointLight( 0xff4400, 5, 30 );
+				var pointLight = new THREE.PointLight( 0xffffff, 5, 30 );
 				pointLight.position.set( 5, 0, 0 );
 				scene.add( pointLight );
 
