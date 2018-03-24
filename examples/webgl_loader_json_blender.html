@@ -71,8 +71,8 @@
 				// loader.load( 'models/animated/monster/monster.js', function ( geometry, materials ) {
 				// loader.load( 'models/animated/20180122_threejs_text_py/20180122_test-1_js.js', function ( geometry, materials ) {
 				// loader.load( 'models/animated/20180122_threejs_text_py/20180122_test-1_js.json', function ( geometry, materials ) {
-				// loader.load( 'models/blender/teset.json', function ( geometry, materials ) {
-				loader.load( 'models/animated/test/man_asdf.json', function ( geometry, materials ) {
+				loader.load( 'models/blender/teset.json', function ( geometry, materials ) {
+				// loader.load( 'models/animated/test/man_asdf.json', function ( geometry, materials ) {
 
 					// adjust color a bit
 
@@ -94,8 +94,8 @@
 					// for ( var i = 0; i < 729; i ++ ) {
 					for ( var i = 0; i < 1; i ++ ) {
 
-						// var mesh = new THREE.Mesh( geometry, materials );
-						var mesh = new THREE.Mesh( geometry, material );
+						var mesh = new THREE.Mesh( geometry, materials );
+						// var mesh = new THREE.Mesh( geometry, material );
 
 						// random placement in a grid
 
@@ -106,8 +106,8 @@
 						mesh.position.set( 0, -1, 0 );
 
 						// var s = THREE.Math.randFloat( 0.00075, 0.001 );
-						// var s = 0.05;
-						var s = 2;
+						var s = 0.05;
+						// var s = 2;
 						mesh.scale.set( s, s, s );
 
 						mesh.rotation.y = THREE.Math.randFloat( -0.25, 0.25 );
@@ -116,9 +116,9 @@
 						mesh.updateMatrix();
 
 						scene.add( mesh );
-						mixer = new THREE.AnimationMixer( mesh );
-						var clip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'gallop', geometry.morphTargets, 30 );
-						mixer.clipAction( clip ).setDuration( 1 ).play();
+						// mixer = new THREE.AnimationMixer( mesh );
+						// var clip = THREE.AnimationClip.CreateFromMorphTargetSequence( 'gallop', geometry.morphTargets, 30 );
+						// mixer.clipAction( clip ).setDuration( 1 ).play();
 
 						// mixer.clipAction( geometry.animations[ 0 ], mesh )
 						// 		.setDuration( 1 )			// one second
